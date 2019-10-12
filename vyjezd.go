@@ -3,14 +3,34 @@ package main
 import "fmt"
 
 const (
-	START int = 1
-	END   int = 2
-	WALL  int = 3
+	END  int = -2
+	WALL int = -3
 )
 
-func bts(city []int, widht int) int {
-	weidht := len(city) / widht
-	// do vrcholu se vstupuje z různých stran, zahrnout
+type vertex struct {
+	depth   int
+	parents []int
+}
+
+func bts(city []int, weight int, Sx, Sy int) int {
+	height := len(city) / weight
+	var graph []vertex
+	var queueA, queueF []int
+	graph = make([]vertex, weight*height)
+	queueA = make([]int, 0)
+	queueF = make([]int, 0)
+
+	for i := range graph {
+		graph[i].depth = -1
+		graph[i].parents = make([]int, 0)
+	}
+	graph[Sy*weight+Sx].depth = 0
+	queueA = append(queueA, Sy*weight+Sx)
+
+	for {
+		for _, v := range queueA {
+		}
+	}
 	return 0
 }
 
@@ -26,7 +46,6 @@ func main() {
 		M++
 		city = make([]int, M*N)
 		fmt.Scanf("%d%d%d%d", &Sx, &Sy, &Cx, &Cy)
-		city[Sy*M+Sx] = START
 		city[Cy*M+Cx] = END
 		for ; K > 0; K-- {
 			var Wx, Wy int
