@@ -12,8 +12,8 @@ type vertex struct {
 	parents []int
 }
 
-func bts(city []int, weight int, Sx, Sy int) int {
-	height := len(city) / weight
+func bts(city *[]int, weight int, Sx, Sy int) int {
+	height := len(*city) / weight
 	var graph []vertex
 	var queueA, queueF []int
 	graph = make([]vertex, weight*height)
@@ -29,7 +29,7 @@ func bts(city []int, weight int, Sx, Sy int) int {
 
 	for {
 		for _, v := range queueA {
-			stat := makeStep(graph, v, queueF, weight)
+			stat := makeStep(&graph, v, &queueF, weight)
 			switch stat {
 			case 1:
 				// OK
@@ -43,8 +43,8 @@ func bts(city []int, weight int, Sx, Sy int) int {
 	return 0
 }
 
-func makeStep(graph []vertex, v int, queueF []int, weight int) int {
-	for _, p := range graph[v].parents {
+func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
+	for _, p := range (*graph)[v].parents {
 		x := v % weight
 		y := v / weight
 		Px := p % weight
@@ -67,12 +67,12 @@ func makeStep(graph []vertex, v int, queueF []int, weight int) int {
 			sons = append(sons, v+1)
 		}
 		for i, s := range sons {
-			if graph[s].depth == WALL {
+			if (*graph)[s].depth == WALL {
 				sons[i] = -1
 			}
-			if s/weight >= len(graph)/weight {
+			if s/weight >= len(*graph)/weight {
 				sons[i] = -1
-			} else if s%weight >= len(graph)%weight {
+			} else if s%weight >= len(*graph)%weight {
 				sons[i] = -1
 			} else if s/weight == 0 {
 				sons[i] = -1
