@@ -21,7 +21,11 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 	queueF = make([]int, 0)
 
 	for i := range graph {
-		graph[i].depth = -1
+		if (*city)[i] < 0 {
+			graph[i].depth = (*city)[i]
+		} else {
+			graph[i].depth = -1
+		}
 		graph[i].parents = make([]int, 0)
 	}
 	graph[Sy*weight+Sx].depth = 0
