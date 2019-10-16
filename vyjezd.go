@@ -13,10 +13,9 @@ type vertex struct {
 }
 
 func bts(city *[]int, weight int, Sx, Sy int) int {
-	height := len(*city) / weight
 	var graph []vertex
 	var queueA, queueF []int
-	graph = make([]vertex, weight*height)
+	graph = make([]vertex, len(*city))
 	queueA = make([]int, 0)
 	queueF = make([]int, 0)
 
@@ -29,6 +28,7 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 		graph[i].parents = make([]int, 0)
 	}
 	graph[Sy*weight+Sx].depth = 0
+	graph[Sy*weight+Sx].parents = append(graph[Sy*weight+Sx].parents, Sy*weight+Sx+weight)
 	queueA = append(queueA, Sy*weight+Sx)
 
 	for {
@@ -36,56 +36,91 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 			stat := makeStep(&graph, v, &queueF, weight)
 			switch stat {
 			case 1:
-				// OK
+				queueA = queueF
+				queueF = make([]int, 0)
 			case 2:
-				// mám cíl
+				index := queueF[len(queueF)-1]
+				length := graph[index].depth
+				return length
 			case 3:
-				//nejde jít dál
+				fmt.Printf("No solution\n")
+				return 0
 			}
 		}
 	}
-	return 0
 }
 
 func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
+	fmt.Printf("%d: ", v)
+	var canGo bool = false
+	x := v % weight
+	y := v / weight
 	for _, p := range (*graph)[v].parents {
-		x := v % weight
-		y := v / weight
 		Px := p % weight
 		Py := p / weight
 		var sons []int = make([]int, 0)
 
-		if x > Px {
-			sons = append(sons, v+weight)
-			sons = append(sons, v-1)
-		} else if x == Px {
-			if y < Py {
+		if y < Py {
+			if y > 0 {
 				sons = append(sons, v-weight)
-				sons = append(sons, v-1)
-			} else {
-				sons = append(sons, v+weight)
+			}
+			if x < weight-1 {
 				sons = append(sons, v+1)
 			}
+		} else if y == Py {
+			if x < Px {
+				if y > 0 {
+					sons = append(sons, v-weight)
+				}
+				if x > 0 {
+					sons = append(sons, v-1)
+				}
+			} else {
+				if y < len(*graph)/weight-1 {
+					sons = append(sons, v+weight)
+				}
+				if x < weight-1 {
+					sons = append(sons, v+1)
+				}
+			}
 		} else {
-			sons = append(sons, v-weight)
-			sons = append(sons, v+1)
+			if y < len(*graph)/weight-1 {
+				sons = append(sons, v+weight)
+			}
+			if x > 0 {
+				sons = append(sons, v-1)
+			}
 		}
-		for i, s := range sons {
-			if (*graph)[s].depth == WALL {
-				sons[i] = -1
+		for _, s := range sons {
+			if !isIn(v, &(*graph)[s].parents) && (*graph)[s].depth != WALL {
+				*queueF = append(*queueF, s)
+				(*graph)[s].depth = (*graph)[v].depth + 1
+				if (*graph)[s].depth == END {
+					return 2
+				}
+				(*graph)[s].parents = append((*graph)[s].parents, v)
+				canGo = true
 			}
-			if s/weight >= len(*graph)/weight {
-				sons[i] = -1
-			} else if s%weight >= len(*graph)%weight {
-				sons[i] = -1
-			} else if s/weight == 0 {
-				sons[i] = -1
-			} else if s%weight == 0 {
-				sons[i] = -1
-			}
+		}
+		for i, x := range sons {
+			fmt.Printf("%d:%d ", x, (*graph)[i].depth)
+		}
+		println()
+	}
+	if canGo {
+		return 1
+	} else {
+		return 3
+	}
+}
+
+func isIn(what int, where *[]int) bool {
+	for _, x := range *where {
+		if x == what {
+			return true
 		}
 	}
-	return 1
+	return false
 }
 
 func main() {
@@ -95,16 +130,26 @@ func main() {
 		var M, N, K int
 		var Sx, Sy, Cx, Cy int
 		var city []int
-		fmt.Scanf("%d%d", &N, &M, &K)
-		N++ // indexuje se od 1
-		M++
+		fmt.Scanf("%d%d%d", &N, &M, &K) // M šířka
 		city = make([]int, M*N)
-		fmt.Scanf("%d%d%d%d", &Sx, &Sy, &Cx, &Cy)
+		fmt.Scanf("%d %d %d %d", &Sy, &Sx, &Cy, &Cx)
+		if Sy == Cy && Sx == Cx {
+			fmt.Printf("0")
+			continue
+		}
+		Sx--
+		Sy--
+		Cx--
+		Cy--
+		//fmt.Printf("%d %d %d %d %d %d %d\n", N, M, K, Sx, Sy, Cx, Cy)
 		city[Cy*M+Cx] = END
 		for ; K > 0; K-- {
 			var Wx, Wy int
-			fmt.Scanf("%d%d", &Wx, &Wy)
+			fmt.Scanf("%d%d", &Wy, &Wx)
+			Wx--
+			Wy--
 			city[Wy*M+Wx] = WALL
 		}
+		bts(&city, M, Sx, Sy)
 	}
 }
