@@ -111,6 +111,9 @@ func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
 			println()
 		*/
 	}
+	if (*graph)[v].depth == 0 {
+		(*graph)[v].parents = make([]int, 0)
+	}
 	if canGo {
 		return 1
 	} else {
