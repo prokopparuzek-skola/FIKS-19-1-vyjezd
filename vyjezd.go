@@ -41,7 +41,8 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 			case 2:
 				index := queueF[len(queueF)-1]
 				length := graph[index].depth
-				return length
+				fmt.Printf("%d\n", length)
+				return 0
 			case 3:
 				fmt.Printf("No solution\n")
 				return 0
@@ -51,7 +52,7 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 }
 
 func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
-	fmt.Printf("%d: ", v)
+	//fmt.Printf("%d: ", v)
 	var canGo bool = false
 	x := v % weight
 	y := v / weight
@@ -94,18 +95,21 @@ func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
 		for _, s := range sons {
 			if !isIn(v, &(*graph)[s].parents) && (*graph)[s].depth != WALL {
 				*queueF = append(*queueF, s)
-				(*graph)[s].depth = (*graph)[v].depth + 1
 				if (*graph)[s].depth == END {
+					(*graph)[s].depth = (*graph)[v].depth + 1
 					return 2
 				}
+				(*graph)[s].depth = (*graph)[v].depth + 1
 				(*graph)[s].parents = append((*graph)[s].parents, v)
 				canGo = true
 			}
 		}
-		for i, x := range sons {
-			fmt.Printf("%d:%d ", x, (*graph)[i].depth)
-		}
-		println()
+		/*
+			for _, x := range sons {
+				fmt.Printf("%d(%d) ", x, (*graph)[x].depth)
+			}
+			println()
+		*/
 	}
 	if canGo {
 		return 1
@@ -133,15 +137,11 @@ func main() {
 		fmt.Scanf("%d%d%d", &N, &M, &K) // M šířka
 		city = make([]int, M*N)
 		fmt.Scanf("%d %d %d %d", &Sy, &Sx, &Cy, &Cx)
-		if Sy == Cy && Sx == Cx {
-			fmt.Printf("0")
-			continue
-		}
+		//fmt.Printf(" %d %d %d %d %d %d %d", N, M, K, Sx, Sy, Cx, Cy)
 		Sx--
 		Sy--
 		Cx--
 		Cy--
-		//fmt.Printf("%d %d %d %d %d %d %d\n", N, M, K, Sx, Sy, Cx, Cy)
 		city[Cy*M+Cx] = END
 		for ; K > 0; K-- {
 			var Wx, Wy int
@@ -149,6 +149,10 @@ func main() {
 			Wx--
 			Wy--
 			city[Wy*M+Wx] = WALL
+		}
+		if Sy == Cy && Sx == Cx {
+			fmt.Printf("0\n")
+			continue
 		}
 		bts(&city, M, Sx, Sy)
 	}
