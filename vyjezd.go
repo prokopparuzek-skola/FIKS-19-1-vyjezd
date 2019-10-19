@@ -32,21 +32,27 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 	queueA = append(queueA, Sy*weight+Sx)
 
 	for {
+		var canGo bool = false
 		for _, v := range queueA {
 			stat := makeStep(&graph, v, &queueF, weight)
 			switch stat {
 			case 1:
-				queueA = queueF
+				queueA = make([]int, len(queueF))
+				copy(queueA, queueF)
 				queueF = make([]int, 0)
+				canGo = true
 			case 2:
 				index := queueF[len(queueF)-1]
 				length := graph[index].depth
 				fmt.Printf("%d\n", length)
 				return 0
 			case 3:
-				fmt.Printf("No solution\n")
-				return 0
+				continue
 			}
+		}
+		if !canGo {
+			fmt.Printf("No solution\n")
+			return 0
 		}
 	}
 }
