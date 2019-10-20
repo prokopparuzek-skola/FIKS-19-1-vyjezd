@@ -58,6 +58,7 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 }
 
 func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
+	fmt.Printf("%d: ", v)
 	var canGo bool = false
 	x := v % weight
 	y := v / weight
@@ -109,12 +110,10 @@ func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
 				canGo = true
 			}
 		}
-		/*
-			for _, x := range sons {
-				fmt.Printf("%d(%d) ", x, (*graph)[x].depth)
-			}
-			println()
-		*/
+		for _, x := range sons {
+			fmt.Printf("%d(%d) ", x, (*graph)[x].depth)
+		}
+		fmt.Println()
 	}
 	if (*graph)[v].depth == 0 {
 		(*graph)[v].parents = make([]int, 0)
