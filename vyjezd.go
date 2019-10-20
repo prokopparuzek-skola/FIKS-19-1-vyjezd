@@ -37,9 +37,6 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 			stat := makeStep(&graph, v, &queueF, weight)
 			switch stat {
 			case 1:
-				queueA = make([]int, len(queueF))
-				copy(queueA, queueF)
-				queueF = make([]int, 0)
 				canGo = true
 			case 2:
 				index := queueF[len(queueF)-1]
@@ -54,11 +51,14 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 			fmt.Printf("No solution\n")
 			return 0
 		}
+		queueA = make([]int, len(queueF))
+		copy(queueA, queueF)
+		queueF = make([]int, 0)
 	}
 }
 
 func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
-	fmt.Printf("%d: ", v)
+	//fmt.Printf("%d: ", v)
 	var canGo bool = false
 	x := v % weight
 	y := v / weight
@@ -110,10 +110,12 @@ func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
 				canGo = true
 			}
 		}
-		for _, x := range sons {
-			fmt.Printf("%d(%d) ", x, (*graph)[x].depth)
-		}
-		fmt.Println()
+		/*
+			for _, x := range sons {
+				fmt.Printf("%d(%d) ", x, (*graph)[x].depth)
+			}
+			fmt.Println()
+		*/
 	}
 	if (*graph)[v].depth == 0 {
 		(*graph)[v].parents = make([]int, 0)
@@ -156,23 +158,25 @@ func main() {
 			Wy--
 			city[Wy*M+Wx] = WALL
 		}
-		for i := 0; i <= (N - 1); i++ {
-			for j := 0; j <= (M - 1); j++ {
-				if i == Sy && j == Sx {
-					fmt.Print("S")
-					continue
+		/*
+			for i := 0; i <= (N - 1); i++ {
+				for j := 0; j <= (M - 1); j++ {
+					if i == Sy && j == Sx {
+						fmt.Print("S")
+						continue
+					}
+					switch city[i*M+j] {
+					case 0:
+						fmt.Print(".")
+					case WALL:
+						fmt.Print("#")
+					case END:
+						fmt.Print("C")
+					}
 				}
-				switch city[i*M+j] {
-				case 0:
-					fmt.Print(".")
-				case WALL:
-					fmt.Print("#")
-				case END:
-					fmt.Print("C")
-				}
+				fmt.Println()
 			}
-			fmt.Println()
-		}
+		*/
 		if Sy == Cy && Sx == Cx {
 			fmt.Printf("0\n")
 			continue
