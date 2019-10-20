@@ -58,7 +58,6 @@ func bts(city *[]int, weight int, Sx, Sy int) int {
 }
 
 func makeStep(graph *[]vertex, v int, queueF *[]int, weight int) int {
-	//fmt.Printf("%d: ", v)
 	var canGo bool = false
 	x := v % weight
 	y := v / weight
@@ -146,7 +145,6 @@ func main() {
 		fmt.Scanf("%d%d%d", &N, &M, &K) // M šířka
 		city = make([]int, M*N)
 		fmt.Scanf("%d %d %d %d", &Sy, &Sx, &Cy, &Cx)
-		//fmt.Printf(" %d %d %d %d %d %d %d", N, M, K, Sx, Sy, Cx, Cy)
 		Sx--
 		Sy--
 		Cx--
@@ -158,6 +156,23 @@ func main() {
 			Wx--
 			Wy--
 			city[Wy*M+Wx] = WALL
+		}
+		for i := 0; i <= (N - 1); i++ {
+			for j := 0; j <= (M - 1); j++ {
+				if i == Sy && j == Sx {
+					fmt.Print("S")
+					continue
+				}
+				switch city[i*M+j] {
+				case 0:
+					fmt.Print(".")
+				case WALL:
+					fmt.Print("#")
+				case END:
+					fmt.Print("C")
+				}
+			}
+			fmt.Println()
 		}
 		if Sy == Cy && Sx == Cx {
 			fmt.Printf("0\n")
